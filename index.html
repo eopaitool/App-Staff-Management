@@ -1,1809 +1,569 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+<base target="_top">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRD: Staff Manage App — Phase 1 (Site AIS)</title>
+<title>Training Class Registration | Apr - Dec 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --bg: #ffffff;
-    --bg-alt: #f8fafc;
-    --bg-code: #f1f5f9;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --text-muted: #64748b;
-    --success: #16a34a;
-    --warning: #f59e0b;
-    --danger: #dc2626;
-    --info: #0891b2;
+    --bg: #fef9f3;
+    --ink: #1a1a2e;
+    --ink-soft: #4a4a5e;
+    --ink-mute: #8a8a9e;
+    --line: #ececf0;
+    --card: #ffffff;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow-md: 0 8px 28px rgba(0,0,0,.08);
+    --shadow-lg: 0 24px 60px rgba(0,0,0,.12);
   }
-
-  * { box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; scroll-padding-top: 20px; }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { font-family: 'Prompt', sans-serif; background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", "Noto Sans Thai", "Helvetica Neue", Arial, sans-serif;
-    line-height: 1.7;
-    color: var(--text);
-    background: var(--bg-alt);
-    margin: 0;
-    padding: 0;
-    font-size: 16px;
+    background-image:
+      radial-gradient(circle at 8% 12%, #ffd6e0 0%, transparent 22%),
+      radial-gradient(circle at 92% 18%, #ffe8b8 0%, transparent 22%),
+      radial-gradient(circle at 5% 88%, #d4f4e8 0%, transparent 22%),
+      radial-gradient(circle at 95% 92%, #e0d4ff 0%, transparent 22%);
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.banner {
+    background: linear-gradient(135deg, #ff7eb9 0%, #ff5e8a 100%);
+    border-radius: 28px; padding: 36px 40px;
+    box-shadow: var(--shadow-md); margin-bottom: 12px;
+    position: relative; overflow: hidden;
+  }
+  header.banner::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% -20%, rgba(255,255,255,.25), transparent 50%);
+    pointer-events: none;
+  }
+  header h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
+    font-size: clamp(28px, 4vw, 42px); color: #fff; letter-spacing: -.5px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  header p.sub { color: rgba(255,255,255,.92); font-size: 15px; margin-top: 8px; font-style: italic; font-weight: 400; }
+
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin: 28px 0 24px; align-items: center; justify-content: space-between;
+  }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    padding: 8px 16px; border-radius: 100px; border: 1.5px solid var(--line);
+    background: var(--card); color: var(--ink-soft); font-family: inherit;
+    font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s;
+  }
+  .chip:hover { border-color: var(--ink); }
+  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .legend { display: flex; gap: 16px; font-size: 13px; color: var(--ink-mute); }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px; }
+
+  .card {
+    background: var(--card); border-radius: 22px; padding: 0;
+    border: 2px solid var(--accent);
+    box-shadow: var(--shadow-sm);
+    transition: transform .25s ease, box-shadow .25s ease;
+    overflow: hidden; display: flex; flex-direction: column; position: relative;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .card-head { padding: 18px 20px 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .badge {
+    background: var(--accent); color: #fff;
+    padding: 4px 12px; border-radius: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .icon { font-size: 28px; line-height: 1; }
+  .card-body { padding: 12px 20px 18px; flex: 1; }
+  .card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 19px; font-weight: 700; line-height: 1.25; margin-bottom: 6px; color: var(--ink); }
+  .card .desc { font-size: 13.5px; color: var(--ink-soft); font-style: italic; line-height: 1.45; min-height: 38px; }
+  .card .date { margin-top: 14px; font-size: 14px; font-weight: 500; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+
+  .card-stats {
+    padding: 12px 20px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,.015));
+    display: flex; gap: 14px; font-size: 12.5px; border-top: 1px dashed var(--line);
+  }
+  .stat { flex: 1; }
+  .stat-label { color: var(--ink-mute); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+  .stat-val { font-weight: 700; color: var(--ink); font-size: 15px; margin-top: 2px; }
+  .stat-val .max { color: var(--ink-mute); font-weight: 400; font-size: 13px; }
+  .progress { height: 6px; background: rgba(0,0,0,.05); border-radius: 100px; overflow: hidden; margin: 0 20px 14px; }
+  .progress-bar { height: 100%; background: var(--accent); border-radius: 100px; transition: width .4s ease; }
+
+  .card-actions { padding: 0 16px 16px; display: flex; gap: 8px; }
+  .btn {
+    border: none; cursor: pointer; font-family: inherit; font-weight: 600;
+    border-radius: 12px; padding: 10px 16px; font-size: 14px;
+    transition: all .15s; flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(.92); transform: translateY(-1px); }
+  .btn-ghost { background: rgba(0,0,0,.04); color: var(--ink); }
+  .btn-ghost:hover { background: rgba(0,0,0,.08); }
+  .btn-full { background: var(--ink); color: #fff; padding: 12px 20px; }
+  .btn-full:hover { background: #000; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+  .overlay {
+    position: fixed; inset: 0; background: rgba(20,20,30,.55);
+    backdrop-filter: blur(6px); z-index: 100;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; animation: fade .2s ease;
+  }
+  .overlay.show { display: flex; }
+  @keyframes fade { from {opacity:0} to {opacity:1} }
+  .modal {
+    background: #fff; border-radius: 24px; max-width: 720px; width: 100%;
+    max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: var(--shadow-lg); animation: pop .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop { from {transform: scale(.92); opacity:0} to {transform: scale(1); opacity:1} }
+  .modal-head { padding: 28px 32px 20px; border-bottom: 1px solid var(--line); color: #fff; position: relative; }
+  .modal-head h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; line-height: 1.2; }
+  .modal-head .modal-meta { margin-top: 8px; font-size: 14px; opacity: .92; font-style: italic; }
+  .modal-head .close {
+    position: absolute; top: 20px; right: 20px;
+    background: rgba(255,255,255,.2); border: none; color: #fff;
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 20px;
+    display: flex; align-items: center; justify-content: center; transition: background .15s;
+  }
+  .modal-head .close:hover { background: rgba(255,255,255,.35); }
+
+  .modal-body { padding: 28px 32px; overflow-y: auto; flex: 1; }
+  .modal-section { margin-bottom: 28px; }
+  .modal-section:last-child { margin-bottom: 0; }
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--ink-mute);
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-title .count {
+    background: var(--accent); color: #fff;
+    padding: 2px 10px; border-radius: 100px; font-size: 11px;
   }
 
-  .layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 0;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  /* Sidebar TOC */
-  .toc {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    padding: 24px 16px;
-    background: var(--bg);
-    border-right: 1px solid var(--border);
-  }
-
-  .toc h3 {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    margin: 0 0 12px;
-    padding: 0 8px;
-  }
-
-  .toc ol {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    counter-reset: toc;
-  }
-
-  .toc li {
-    counter-increment: toc;
-  }
-
-  .toc a {
-    display: block;
-    padding: 6px 8px;
-    color: var(--text);
-    text-decoration: none;
-    font-size: 14px;
-    border-radius: 6px;
-    border-left: 2px solid transparent;
-  }
-
-  .toc a::before {
-    content: counter(toc) ". ";
-    color: var(--text-muted);
-    margin-right: 4px;
-  }
-
-  .toc a:hover {
-    background: var(--bg-alt);
-    color: var(--primary);
-  }
-
-  /* Main content */
-  main {
-    background: var(--bg);
-    padding: 48px 56px;
-    max-width: 100%;
-  }
-
-  .header {
-    border-bottom: 3px solid var(--primary);
-    padding-bottom: 20px;
-    margin-bottom: 32px;
-  }
-
-  .header h1 {
-    font-size: 32px;
-    margin: 0 0 12px;
-    color: var(--primary-dark);
-    line-height: 1.3;
-  }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    font-size: 14px;
-    color: var(--text-muted);
-  }
-
-  .meta span strong { color: var(--text); margin-right: 4px; }
-
-  .status-badge {
-    display: inline-block;
-    background: var(--success);
-    color: white;
-    padding: 2px 10px;
+  .person-list { display: flex; flex-direction: column; gap: 8px; }
+  .person {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; background: rgba(0,0,0,.025);
     border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
+  }
+  .person.waitlist { background: rgba(255,184,77,.12); }
+  .person .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .person .info { flex: 1; min-width: 0; }
+  .person .name { font-weight: 600; font-size: 14.5px; color: var(--ink); }
+  .person .meta { font-size: 12px; color: var(--ink-mute); margin-top: 1px; }
+  .person .rank {
+    font-size: 11px; color: var(--ink-mute); font-weight: 600;
+    background: rgba(0,0,0,.04); padding: 3px 8px; border-radius: 6px;
+  }
+  .person button.unreg {
+    border: none; background: transparent; color: var(--ink-mute);
+    cursor: pointer; padding: 4px 8px; border-radius: 6px; font-size: 12px;
+    font-family: inherit;
+  }
+  .person button.unreg:hover { background: rgba(255,0,0,.08); color: #d44; }
+
+  .empty-state {
+    text-align: center; padding: 24px; color: var(--ink-mute);
+    font-size: 13.5px; background: rgba(0,0,0,.02);
+    border-radius: 12px; border: 1.5px dashed var(--line);
   }
 
-  /* Section */
-  section {
-    margin: 40px 0;
-    scroll-margin-top: 20px;
+  form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  form .full { grid-column: 1 / -1; }
+  .field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--ink-soft); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: .5px;
   }
-
-  h2 {
-    font-size: 24px;
-    color: var(--primary-dark);
-    border-bottom: 2px solid var(--border);
-    padding-bottom: 8px;
-    margin: 48px 0 20px;
+  .field input, .field select {
+    width: 100%; padding: 11px 14px; border: 1.5px solid var(--line);
+    border-radius: 10px; font-size: 14px; font-family: inherit;
+    background: #fff; transition: border-color .15s;
   }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+  .field .hint { font-size: 11.5px; color: var(--ink-mute); margin-top: 4px; }
 
-  h3 {
-    font-size: 19px;
-    color: var(--text);
-    margin: 28px 0 12px;
+  .alert {
+    padding: 12px 14px; border-radius: 10px; font-size: 13.5px;
+    margin-bottom: 14px; display: flex; gap: 10px; align-items: flex-start;
   }
+  .alert-warn { background: #fff4e0; color: #8a5a00; border-left: 3px solid #ffb84d; }
+  .alert-info { background: #e8f4ff; color: #0a4a82; border-left: 3px solid #4a90e2; }
+  .alert-err  { background: #ffe8ec; color: #8a0a20; border-left: 3px solid #ff5e8a; }
 
-  h4 {
-    font-size: 16px;
-    color: var(--text);
-    margin: 20px 0 10px;
-    font-weight: 600;
+  .loader { text-align: center; padding: 40px; color: var(--ink-mute); }
+  .spinner {
+    display: inline-block; width: 24px; height: 24px;
+    border: 3px solid var(--line); border-top-color: var(--ink);
+    border-radius: 50%; animation: spin .8s linear infinite;
   }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  p { margin: 12px 0; }
-
-  ol, ul { margin: 12px 0; padding-left: 24px; }
-  ol li, ul li { margin: 6px 0; }
-
-  /* Tables */
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 16px 0;
-    font-size: 14px;
-    background: var(--bg);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff;
+    padding: 12px 20px; border-radius: 100px; font-size: 14px;
+    box-shadow: var(--shadow-lg); z-index: 200;
+    opacity: 0; pointer-events: none;
+    transition: all .25s; max-width: 90vw;
   }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+  .toast.error { background: #c8203b; }
 
-  th {
-    background: var(--bg-alt);
-    color: var(--text);
-    font-weight: 600;
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
-
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--bg-alt); }
-
-  /* Code & pre */
-  code {
-    background: var(--bg-code);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
-    font-size: 13px;
-    color: var(--primary-dark);
-  }
-
-  pre {
-    background: var(--bg-code);
-    padding: 16px;
-    border-radius: 8px;
-    overflow-x: auto;
-    font-size: 13px;
-    line-height: 1.5;
-    border-left: 3px solid var(--primary);
-  }
-
-  pre code {
-    background: none;
-    padding: 0;
-    color: var(--text);
-  }
-
-  /* User stories */
-  .user-stories-group {
-    background: var(--bg-alt);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin: 12px 0;
-    border-left: 3px solid var(--primary);
-  }
-
-  .user-stories-group h3 {
-    margin-top: 0;
-    color: var(--primary-dark);
-  }
-
-  .user-stories-group ol { margin: 8px 0 0; }
-  .user-stories-group li { margin: 8px 0; }
-
-  /* Callouts */
-  .callout {
-    padding: 14px 18px;
-    border-radius: 8px;
-    margin: 16px 0;
-    border-left: 4px solid;
-  }
-  .callout.info { background: #eff6ff; border-color: var(--info); }
-  .callout.warning { background: #fffbeb; border-color: var(--warning); }
-  .callout.danger { background: #fef2f2; border-color: var(--danger); }
-  .callout.success { background: #f0fdf4; border-color: var(--success); }
-  .callout strong { display: block; margin-bottom: 4px; }
-
-  /* Module card */
-  .module-card {
-    background: var(--bg-alt);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin: 12px 0;
-    border-left: 3px solid var(--primary);
-  }
-
-  .module-card h4 {
-    margin-top: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .tag {
-    display: inline-block;
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-  .tag.deep { background: #dcfce7; color: var(--success); }
-  .tag.shallow { background: #fef3c7; color: #92400e; }
-  .tag.mixed { background: #ddd6fe; color: #6d28d9; }
-
-  /* Footer */
-  footer {
-    margin-top: 64px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
-
-  /* Responsive */
-  @media (max-width: 1024px) {
-    .layout { grid-template-columns: 1fr; }
-    .toc { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-    main { padding: 32px 24px; }
-  }
-
-  @media print {
-    .toc { display: none; }
-    main { padding: 24px; max-width: 100%; }
-    .layout { grid-template-columns: 1fr; }
-    body { background: white; font-size: 12pt; }
-    h2, h3 { page-break-after: avoid; }
-    table, pre, .callout, .module-card { page-break-inside: avoid; }
+  @media (max-width: 600px) {
+    .wrap { padding: 16px 14px 40px; }
+    header.banner { padding: 24px 22px; }
+    form { grid-template-columns: 1fr; }
+    .modal-head, .modal-body { padding: 22px 22px; }
+    .toolbar { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="layout">
+  <header class="banner">
+    <h1><span>🎓</span> Training Class · Onsite Workshop</h1>
+    <p class="sub">Apr – Dec 2026  |  9.00 – 16.30 น.  |  Onsite @ Panjathani</p>
+  </header>
 
-  <!-- Table of Contents -->
-  <aside class="toc">
-    <h3>สารบัญ</h3>
-    <ol>
-      <li><a href="#problem">Problem Statement</a></li>
-      <li><a href="#solution">Solution</a></li>
-      <li><a href="#user-stories">User Stories (53)</a></li>
-      <li><a href="#implementation">Implementation Decisions</a></li>
-      <li><a href="#data-model">Data Model</a></li>
-      <li><a href="#security">Security Model</a></li>
-      <li><a href="#flows">Key Flows</a></li>
-      <li><a href="#testing">Testing Decisions</a></li>
-      <li><a href="#out-of-scope">Out of Scope</a></li>
-      <li><a href="#further-notes">Further Notes</a></li>
-      <li><a href="#roadmap">Phase 2 Roadmap</a></li>
-      <li><a href="#risks">Risks & Mitigations</a></li>
-      <li><a href="#config">Configuration Checklist</a></li>
-      <li><a href="#metrics">Success Metrics</a></li>
-      <li><a href="#open-questions">Open Questions</a></li>
-      <li><a href="#mockups">UI Mockups</a></li>
-    </ol>
-  </aside>
-
-  <main>
-
-    <div class="header">
-      <h1>PRD: Staff Manage App — Phase 1 (Site AIS)</h1>
-      <div class="meta">
-        <span><strong>Version:</strong> 1.0</span>
-        <span><strong>Date:</strong> 2026-05-20</span>
-        <span><strong>Owner:</strong> G-able (Site AIS Team)</span>
-        <span><strong>Status:</strong> <span class="status-badge">Ready for Implementation</span></span>
-      </div>
+  <div class="toolbar">
+    <div class="filters">
+      <button class="chip active" data-filter="all">ทั้งหมด</button>
+      <button class="chip" data-filter="confirmed">Confirmed</button>
+      <button class="chip" data-filter="request">Request by BU</button>
     </div>
-
-    <!-- Problem Statement -->
-    <section id="problem">
-      <h2>1. Problem Statement</h2>
-      <p>ปัจจุบันการจัดการพนักงาน outsource ของ G-able ที่ทำงาน on-site ที่ลูกค้า (เริ่มจาก Site AIS, ~39 คน) ทำผ่านเอกสาร Excel แบบ manual ทั้งหมด ทำให้เกิดปัญหา:</p>
-      <ol>
-        <li><strong>การลงเวลาทำงาน (Time-attendance)</strong> ไม่มีการ verify ว่าพนักงานอยู่ที่ทำงานจริง — เกิดปัญหา "ฝากเพื่อนลงชื่อ" (buddy punching) ได้ง่าย</li>
-        <li><strong>การขออนุมัติวันลา</strong> ใช้กระดาษ/อีเมล ไม่มีการเช็ค quota แบบ real-time ทำให้เกิดการขอเกินสิทธิ์โดยไม่ตั้งใจ และ Admin ต้องคำนวณเอง</li>
-        <li><strong>การส่ง Timesheet รายเดือน</strong> พนักงานต้องกรอก Excel เองตามที่จำได้ ผิดพลาดบ่อย และ Admin ต้องตรวจสอบรายคน ก่อนส่งให้ PRTR ทุกสิ้นเดือน</li>
-        <li><strong>ไม่มี audit trail</strong> ที่ตรวจสอบได้ว่าใคร check-in/out เมื่อไหร่ และที่ไหน</li>
-        <li><strong>OT</strong> คำนวณยากเพราะต้องดูเวลาเข้า-ออกย้อนหลังจาก Excel หลายไฟล์</li>
-      </ol>
-      <p>ทีม PRTR (บริษัทผู้บริหารจัดการ outsource) ต้องการ timesheet ที่ครบถ้วน ตรงตาม format มาตรฐาน และส่งทันเวลาทุกสิ้นเดือนเพื่อใช้ทำ payroll</p>
-    </section>
-
-    <!-- Solution -->
-    <section id="solution">
-      <h2>2. Solution</h2>
-      <p>สร้าง <strong>Staff Manage App</strong> เป็น web application ที่:</p>
-      <ol>
-        <li>ให้พนักงาน <strong>check-in/check-out</strong> ผ่านมือถือ โดยมีการ verify ตำแหน่ง GPS (อยู่ในรัศมีของสถานที่ทำงาน) และผูกกับ device ที่ลงทะเบียน</li>
-        <li>ให้พนักงาน <strong>ขอลา</strong> ผ่านระบบ ดู quota เหลือ real-time และให้ Admin <strong>approve/reject</strong> ผ่านระบบเดียวกัน</li>
-        <li><strong>Generate Timesheet รายเดือนอัตโนมัติ</strong> จากข้อมูล check-in/out + ให้พนักงานใส่ OT manual + ค่าเบี้ยเลี้ยง</li>
-        <li><strong>Export ใบลงเวลาในรูปแบบ Excel</strong> ตรงกับ template ของ PRTR Site AIS เป๊ะ และ convert เป็น PDF เก็บใน Google Drive อัตโนมัติ</li>
-        <li>ทุก action มี <strong>audit log</strong> ตรวจสอบได้</li>
-      </ol>
-      <div class="callout info">
-        <strong>Technology Stack</strong>
-        Google Apps Script (Web App) + Google Sheet (data) + Google Drive (files) + Gmail (notification)
-      </div>
-      <div class="callout success">
-        <strong>MVP Scope</strong>
-        Site AIS เท่านั้น (~39 คน) — ขยาย site อื่นใน Phase 2
-      </div>
-    </section>
-
-    <!-- User Stories -->
-    <section id="user-stories">
-      <h2>3. User Stories (53 stories)</h2>
-
-      <div class="user-stories-group">
-        <h3>A. Authentication & Onboarding (7 stories)</h3>
-        <ol>
-          <li><strong>As an Admin,</strong> I want to เพิ่มพนักงานใหม่เข้าระบบ (email, ชื่อ, รหัสพนักงาน, ตำแหน่ง, site, workplaces, shift, start date), so that พนักงานสามารถ login เข้าใช้งานระบบได้</li>
-          <li><strong>As an Admin,</strong> I want to mark พนักงานว่ามี role เป็น Backfill, so that พนักงานคนนั้นสามารถถูก assign ให้ check-in ที่ workplace ของ site อื่นได้</li>
-          <li><strong>As an Employee,</strong> I want to login เข้าระบบด้วย Google account ของบริษัท, so that ไม่ต้องจำ password เพิ่ม</li>
-          <li><strong>As an Employee,</strong> I want to ลงทะเบียน device ตัวเองในการ login ครั้งแรก, so that ระบบรู้ว่าเครื่องไหนเป็นของผม</li>
-          <li><strong>As an Employee,</strong> I want to ระบบ auto-logout หลังไม่ได้ใช้งาน 8 ชั่วโมง, so that ลดความเสี่ยงคนอื่นมาใช้เครื่องผมต่อ</li>
-          <li><strong>As an Employee,</strong> I want to ขอ reset device ผ่าน Admin เมื่อเปลี่ยนเครื่องหรือเครื่องหาย, so that ใช้งานต่อได้</li>
-          <li><strong>As an Admin,</strong> I want to reset device binding ของพนักงาน, so that พนักงานที่เปลี่ยนเครื่องสามารถ register เครื่องใหม่ได้</li>
-        </ol>
-      </div>
-
-      <div class="user-stories-group">
-        <h3>B. Check-in / Check-out (8 stories)</h3>
-        <ol start="8">
-          <li><strong>As an Employee,</strong> I want to กดปุ่ม Check-in ครั้งเดียว, so that ระบบ auto-detect workplace ที่ใกล้ที่สุดและบันทึกเวลา</li>
-          <li><strong>As an Employee,</strong> I want to ระบบ block การ check-in เมื่อ GPS อยู่นอกรัศมีของ workplace ทุกที่ที่ผมถูก assign, so that ป้องกันการ check-in นอกที่ทำงาน</li>
-          <li><strong>As an Employee ที่เป็น Backfill,</strong> I want to check-in ที่ workplace ของ site อื่นที่ Admin assign ให้ได้, so that สามารถไปทดแทนพนักงาน site อื่นได้</li>
-          <li><strong>As an Employee,</strong> I want to กด Check-out ตอนเลิกงาน, so that ระบบบันทึกเวลาออก</li>
-          <li><strong>As an Employee,</strong> I want to ได้รับ email แจ้งทุกครั้งที่ check-in สำเร็จ, so that รู้ทันทีถ้ามีคนสวมรอย</li>
-          <li><strong>As an Employee,</strong> I want to ดู check-in/out history ของตัวเอง, so that ตรวจสอบได้ว่าระบบบันทึกครบ</li>
-          <li><strong>As an Admin,</strong> I want to ดู check-in/out log ของพนักงานทุกคน, so that ตรวจสอบความผิดปกติได้</li>
-          <li><strong>As a system,</strong> I want to บันทึกทุก check-in attempt (สำเร็จและล้มเหลว) พร้อม timestamp, device, GPS, IP, so that มี audit trail</li>
-        </ol>
-      </div>
-
-      <div class="user-stories-group">
-        <h3>C. Leave Management (13 stories)</h3>
-        <ol start="16">
-          <li><strong>As an Employee,</strong> I want to ขอลาผ่านระบบ (เลือก type, วันที่, ครึ่งวันได้, ระบุเหตุผล), so that ส่งคำขอไปให้ Admin</li>
-          <li><strong>As an Employee,</strong> I want to เห็น quota เหลือของแต่ละ type real-time, so that วางแผนการลาได้</li>
-          <li><strong>As an Employee,</strong> I want to ระบบหัก quota ทันทีตอนกด submit (pending), so that ไม่ขอซ้ำเกิน quota</li>
-          <li><strong>As an Employee,</strong> I want to ดูประวัติการลา (pending, approved, rejected), so that ตรวจสอบและจำได้</li>
-          <li><strong>As an Employee,</strong> I want to cancel คำขอลาที่ยัง pending ได้, so that ระบบคืน quota ให้</li>
-          <li><strong>As an Employee,</strong> I want to ขอลาป่วยย้อนหลังได้ (backdated), so that กรณีป่วยกะทันหันยังกรอกได้</li>
-          <li><strong>As an Employee,</strong> I want to ระบบ block การขอลาในวันหยุดประจำสัปดาห์ (เสาร์-อาทิตย์), so that ไม่กดผิดและเสีย quota</li>
-          <li><strong>As an Admin,</strong> I want to ดู list คำขอลาที่ pending, so that approve ได้ทั้งหมดในที่เดียว</li>
-          <li><strong>As an Admin,</strong> I want to approve หรือ reject คำขอลา พร้อมใส่เหตุผล, so that Employee เข้าใจการตัดสินใจ</li>
-          <li><strong>As an Admin,</strong> I want to ระบบคืน quota ให้ Employee อัตโนมัติเมื่อ reject, so that ไม่ต้องคำนวณเอง</li>
-          <li><strong>As an Employee,</strong> I want to ได้รับ email + in-app notification ทันทีที่ Admin approve/reject, so that รู้ผลเร็ว</li>
-          <li><strong>As an Employee ที่เข้าใหม่กลางปี,</strong> I want to ระบบให้ quota แบบ pro-rated ตามเดือนที่เหลือ, so that ไม่ได้ quota เต็มอย่างไม่เป็นธรรม</li>
-          <li><strong>As a system,</strong> I want to reset quota ทุก 1 มกราคม (วันที่เหลือถูก forfeit), so that เริ่มปีใหม่ตามมาตรฐาน</li>
-        </ol>
-      </div>
-
-      <div class="user-stories-group">
-        <h3>D. Timesheet (15 stories)</h3>
-        <ol start="29">
-          <li><strong>As an Employee,</strong> I want to ดู timesheet preview ของเดือนปัจจุบัน, so that ตรวจสอบความถูกต้องระหว่างเดือนได้</li>
-          <li><strong>As an Employee,</strong> I want to ระบบ auto-generate timesheet rows จาก check-in/out ทุกวัน, so that ไม่ต้องกรอกซ้ำ</li>
-          <li><strong>As an Employee,</strong> I want to edit เวลาออก (check-out) ของวันที่ลืมกด check-out เอง พร้อมระบุเหตุผล, so that timesheet ถูกต้อง</li>
-          <li><strong>As an Employee,</strong> I want to request adjustment สำหรับวันที่ลืม check-in (ต้องให้ Admin approve), so that timesheet ครบ</li>
-          <li><strong>As an Employee,</strong> I want to ใส่ OT ในแต่ละวัน โดยระบุเวลาเข้า-ออก OT และเลือก rate (x1, x1.5, x2, x3), so that ได้รับค่า OT ตาม rate ที่ถูกต้อง</li>
-          <li><strong>As an Employee,</strong> I want to ใส่ค่าเบี้ยเลี้ยง TAXI ในแต่ละวัน (จำนวนเงินบาท), so that เบิกค่ารถได้</li>
-          <li><strong>As an Employee,</strong> I want to ใส่รายละเอียดงานในแต่ละวัน (optional), so that ระบุงานที่ทำได้</li>
-          <li><strong>As an Employee ที่เป็น Backfill,</strong> I want to ระบบ auto-fill "Onsite [SiteName]" ในช่องรายละเอียดงาน เมื่อ check-in ที่ workplace ของ site อื่น, so that ไม่ต้องพิมพ์เอง</li>
-          <li><strong>As an Employee,</strong> I want to submit timesheet ของเดือนทั้งเดือนในครั้งเดียว, so that ส่งให้ Admin approve</li>
-          <li><strong>As an Employee,</strong> I want to ได้รับ reminder ใกล้ deadline ทุกเดือน, so that ไม่ลืม submit</li>
-          <li><strong>As an Admin,</strong> I want to ดู list timesheet ที่ pending approval, so that approve ได้ทั้งหมดในที่เดียว</li>
-          <li><strong>As an Admin,</strong> I want to approve adjustment request สำหรับวันที่ Employee ลืม check-in, so that timesheet ครบถ้วน</li>
-          <li><strong>As an Admin,</strong> I want to approve timesheet แต่ละคน (หรือ batch), so that เสร็จเร็ว</li>
-          <li><strong>As an Admin,</strong> I want to reject timesheet พร้อม comment, so that Employee แก้แล้ว submit ใหม่</li>
-          <li><strong>As an Employee,</strong> I want to ได้รับ notification เมื่อ timesheet ถูก approve, so that รู้ว่าเรียบร้อย</li>
-        </ol>
-      </div>
-
-      <div class="user-stories-group">
-        <h3>E. Export & PDF (6 stories)</h3>
-        <ol start="44">
-          <li><strong>As an Admin,</strong> I want to upload ลายเซ็นของตัวเอง (image) ครั้งเดียวตอน setup, so that ระบบใช้ฝังในไฟล์ export</li>
-          <li><strong>As a system,</strong> I want to generate ไฟล์ xlsx ตาม template AIS หลัง Admin approve timesheet, so that ส่งให้ PRTR ได้ทันที</li>
-          <li><strong>As a system,</strong> I want to ฝังลายเซ็น Admin ลงในช่อง "หัวหน้างาน" ของไฟล์ export โดยอัตโนมัติ, so that ไม่ต้องเซ็นมือทุกใบ</li>
-          <li><strong>As a system,</strong> I want to convert xlsx เป็น PDF และเก็บใน Google Drive ที่ path <code>/[YYYY]/[MM]/</code>, so that Admin/Employee เปิดดูย้อนหลังได้</li>
-          <li><strong>As an Admin,</strong> I want to download xlsx และ PDF ของพนักงานคนใดก็ได้ในเดือนใดก็ได้, so that ส่งให้ PRTR หรือเก็บเป็นหลักฐาน</li>
-          <li><strong>As an Employee,</strong> I want to ดูและ download PDF timesheet ของตัวเองย้อนหลัง, so that เก็บเป็นหลักฐานส่วนตัว</li>
-        </ol>
-      </div>
-
-      <div class="user-stories-group">
-        <h3>F. Admin Master Data (4 stories)</h3>
-        <ol start="50">
-          <li><strong>As an Admin,</strong> I want to จัดการ Site (เพิ่ม/แก้ — MVP มีแค่ AIS แต่ schema รองรับหลาย site), so that ขยายในอนาคตได้</li>
-          <li><strong>As an Admin,</strong> I want to จัดการ Workplace (พิกัด GPS + รัศมี) ของแต่ละ site, so that กำหนดที่ทำงานได้ถูกต้อง</li>
-          <li><strong>As an Admin,</strong> I want to assign Workplace ให้พนักงานแต่ละคน (>= 1 workplace), so that พนักงานสามารถ check-in ได้ที่ที่ assign</li>
-          <li><strong>As an Admin,</strong> I want to ดู audit log ทั้งระบบ, so that ตรวจสอบและรายงานได้</li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- Implementation -->
-    <section id="implementation">
-      <h2>4. Implementation Decisions</h2>
-
-      <h3>Architecture Overview</h3>
-      <table>
-        <tr><th>Layer</th><th>Choice</th></tr>
-        <tr><td>Hosting</td><td>Google Apps Script (Web App)</td></tr>
-        <tr><td>Data Storage</td><td>Google Sheet (1 spreadsheet, หลาย sheets)</td></tr>
-        <tr><td>File Storage</td><td>Google Drive — <code>/StaffManageApp/Exports/[YYYY]/[MM]/</code></td></tr>
-        <tr><td>Email</td><td>Gmail API (<code>MailApp</code> / <code>GmailApp</code>)</td></tr>
-        <tr><td>Frontend</td><td>HTML + Vanilla JS หรือ light framework (Alpine.js / petite-vue), mobile-first</td></tr>
-        <tr><td>Crypto</td><td><code>Utilities</code> API (UUID, hashing)</td></tr>
-      </table>
-
-      <h3>Modules (12 modules)</h3>
-
-      <div class="module-card">
-        <h4>1. AuthService <span class="tag shallow">Shallow</span></h4>
-        <p>Google OAuth login, session management (8h timeout), device binding validation</p>
-        <p><strong>Interface:</strong> <code>login(email, deviceFingerprint)</code>, <code>validateSession(sessionId)</code>, <code>resetDevice(employeeId)</code></p>
-      </div>
-
-      <div class="module-card">
-        <h4>2. GeoFenceService <span class="tag deep">Deep</span></h4>
-        <p>คำนวณระยะทาง GPS → หา nearest workplace ใน radius (Haversine formula)</p>
-        <p><strong>Interface:</strong> <code>findNearestWorkplaceInRadius(currentLocation, workplaces[])</code> → Workplace | null</p>
-        <p><em>Pure function — ทดสอบง่ายและคุ้ม</em></p>
-      </div>
-
-      <div class="module-card">
-        <h4>3. EmployeeRepository <span class="tag shallow">Shallow</span></h4>
-        <p>CRUD employee profile, assignment management</p>
-        <p><strong>Interface:</strong> <code>getById</code>, <code>getByEmail</code>, <code>create</code>, <code>update</code>, <code>listWorkplaces</code></p>
-      </div>
-
-      <div class="module-card">
-        <h4>4. CheckInService <span class="tag mixed">Mixed</span></h4>
-        <p>Orchestrate check-in flow (device check → GPS check → record → notify)</p>
-        <p><strong>Interface:</strong> <code>checkIn(employeeId, deviceId, currentLocation)</code>, <code>checkOut(employeeId)</code></p>
-      </div>
-
-      <div class="module-card">
-        <h4>5. LeaveQuotaCalculator <span class="tag deep">Deep</span></h4>
-        <p>คำนวณ quota เหลือ รวม pro-rated allocation + pending + approved</p>
-        <p><strong>Interface:</strong> <code>calculateRemaining(employee, leaveType, year, allRequests[])</code> → number</p>
-        <p><em>Pure function — edge case เยอะ ทดสอบคุ้ม</em></p>
-      </div>
-
-      <div class="module-card">
-        <h4>6. LeaveService <span class="tag mixed">Mixed</span></h4>
-        <p>Submit / approve / reject / cancel leave + quota update + weekend validation</p>
-      </div>
-
-      <div class="module-card">
-        <h4>7. TimesheetAggregator <span class="tag deep">Deep</span></h4>
-        <p>รวม check-in events + manual edits + OT entries → TimesheetRow[]</p>
-        <p>Handle forgot check-out, backfill auto-fill, working hours calc</p>
-        <p><em>Pure function — snapshot test ได้</em></p>
-      </div>
-
-      <div class="module-card">
-        <h4>8. TimesheetService <span class="tag mixed">Mixed</span></h4>
-        <p>Submit / approve workflow + edit rules (check-out edit allowed, check-in edit needs approval)</p>
-      </div>
-
-      <div class="module-card">
-        <h4>9. ExportRenderer <span class="tag deep">Deep</span></h4>
-        <p>Render timesheet data → xlsx ตำแหน่ง cells ของ AIS template + ฝัง admin signature</p>
-        <p><em>Snapshot test ของ cell values</em></p>
-      </div>
-
-      <div class="module-card">
-        <h4>10. PDFConverter <span class="tag shallow">Shallow</span></h4>
-        <p>Convert xlsx → PDF + save to Drive</p>
-      </div>
-
-      <div class="module-card">
-        <h4>11. NotificationService <span class="tag shallow">Shallow</span></h4>
-        <p>Email + in-app event dispatcher</p>
-      </div>
-
-      <div class="module-card">
-        <h4>12. AuditLogger <span class="tag shallow">Shallow</span></h4>
-        <p>Append-only log สำหรับทุก action</p>
-      </div>
-    </section>
-
-    <!-- Data Model -->
-    <section id="data-model">
-      <h2>5. Data Model (Google Sheet Structure)</h2>
-      <p>ใช้ Google Sheet 1 ไฟล์ มี 11 sheets ดังนี้:</p>
-
-      <h3>Employees</h3>
-      <table>
-        <tr><th>Column</th><th>Description</th></tr>
-        <tr><td><code>id</code></td><td>UUID</td></tr>
-        <tr><td><code>email</code></td><td>Google email (unique)</td></tr>
-        <tr><td><code>full_name</code></td><td>ชื่อ-นามสกุล</td></tr>
-        <tr><td><code>employee_code</code></td><td>รหัสพนักงาน</td></tr>
-        <tr><td><code>position</code></td><td>ตำแหน่ง</td></tr>
-        <tr><td><code>home_site_id</code></td><td>FK → Sites</td></tr>
-        <tr><td><code>is_backfill</code></td><td>boolean</td></tr>
-        <tr><td><code>workplace_ids</code></td><td>comma-separated FK → Workplaces</td></tr>
-        <tr><td><code>shift_start / shift_end</code></td><td>HH:mm</td></tr>
-        <tr><td><code>working_days</code></td><td>comma-separated (e.g., "1,2,3,4,5")</td></tr>
-        <tr><td><code>supervisor_name</code></td><td>string (โชว์บน timesheet)</td></tr>
-        <tr><td><code>start_date</code></td><td>YYYY-MM-DD</td></tr>
-        <tr><td><code>status</code></td><td>active / inactive</td></tr>
-      </table>
-
-      <h3>Sites</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, name, export_template_drive_id, recipient_email</code></td></tr>
-      </table>
-
-      <h3>Workplaces</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, site_id, name, lat, lng, radius_meters</code></td></tr>
-      </table>
-
-      <h3>Devices</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, device_uuid, browser_fingerprint, registered_at, last_used_at, status</code></td></tr>
-      </table>
-
-      <h3>Sessions</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, device_id, created_at, expires_at (+8h), revoked</code></td></tr>
-      </table>
-
-      <h3>CheckInEvents</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, type (in/out), timestamp, workplace_id, lat, lng, device_id, ip, status, block_reason</code></td></tr>
-      </table>
-
-      <h3>LeaveRequests</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, type (Annual/Sick/Personal), start_date, end_date, half_day_config, reason, status, created_at, decided_at, decided_by, decision_reason, days_count</code></td></tr>
-      </table>
-
-      <h3>TimesheetEntries (รายวัน)</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, date, check_in_time, check_out_time, check_in_workplace_id, check_out_workplace_id, work_description, ot_in_time, ot_out_time, ot_hours_x1, ot_hours_x1_5, ot_hours_x2, ot_hours_x3, taxi_amount, source (auto/manual_edit/admin_approved), edit_reason</code></td></tr>
-      </table>
-
-      <h3>TimesheetSubmissions</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, year, month, submitted_at, status, approved_by, approved_at, export_xlsx_drive_id, export_pdf_drive_id</code></td></tr>
-      </table>
-
-      <h3>CheckInAdjustmentRequests</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, employee_id, date, requested_time, reason, status, created_at, decided_by, decided_at</code></td></tr>
-      </table>
-
-      <h3>Notifications (In-app inbox)</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, user_id, event_type, message, link, created_at, read_at</code></td></tr>
-      </table>
-
-      <h3>AuditLog</h3>
-      <table>
-        <tr><th>Columns</th></tr>
-        <tr><td><code>id, timestamp, actor_id, action, target_type, target_id, metadata (JSON)</code></td></tr>
-      </table>
-
-      <h3>Settings</h3>
-      <p>key-value: <code>admin_signature_drive_id</code>, <code>leave_quota_annual</code>, <code>leave_quota_sick</code>, <code>leave_quota_personal</code>, etc.</p>
-    </section>
-
-    <!-- Security -->
-    <section id="security">
-      <h2>6. Security Model</h2>
-      <ol>
-        <li><strong>Identity:</strong> Google OAuth (ผ่าน Apps Script <code>Session.getActiveUser()</code>)</li>
-        <li><strong>Authorization:</strong> Email ต้อง match ใน <code>Employees.email</code></li>
-        <li><strong>Device Binding:</strong>
-          <ul>
-            <li>First login → generate UUID v4 → save localStorage + <code>Devices</code> sheet</li>
-            <li>Subsequent: client ส่ง UUID → server compare กับ <code>Devices[employee_id]</code></li>
-            <li>Browser fingerprint (canvas hash + UA + screen) เก็บเสริม</li>
-          </ul>
-        </li>
-        <li><strong>Session timeout:</strong> 8 ชั่วโมง</li>
-        <li><strong>Audit Log:</strong> ทุก auth event, check-in, leave/timesheet/admin action</li>
-        <li><strong>Anti-impersonation:</strong> Email alert ทุกครั้งที่ check-in สำเร็จ</li>
-        <li><strong>Recommended:</strong> บังคับ Google 2FA ผ่าน Google Workspace admin policy</li>
-      </ol>
-    </section>
-
-    <!-- Key Flows -->
-    <section id="flows">
-      <h2>7. Key Flows</h2>
-
-      <h3>Flow A: Employee Onboarding</h3>
-<pre><code>Admin เพิ่ม Employee → save Employees sheet
-   ↓
-ระบบส่ง welcome email + link
-   ↓
-Employee คลิก link → Google login (verify email)
-   ↓
-ระบบเช็ค: ไม่มี device → แสดง "Register this device"
-   ↓
-Generate UUID + เก็บ localStorage + Devices sheet
-   ↓
-เปิดหน้า Dashboard</code></pre>
-
-      <h3>Flow B: Daily Check-in</h3>
-<pre><code>Employee เปิด app → session validate
-   ↓
-หน้าหลักแสดงปุ่ม "Check-in"
-   ↓
-กดปุ่ม → request GPS permission → ได้ coordinate
-   ↓
-ส่ง check-in request (employee_id, device_uuid, lat, lng)
-   ↓
-Server:
-  1. Validate session ยัง active
-  2. Validate device_uuid match
-  3. GeoFenceService.findNearestWorkplaceInRadius()
-  4. ถ้า null → return blocked + log
-  5. ถ้าเจอ → append CheckInEvents
-  6. ส่ง email notify + in-app notify
-   ↓
-Client แสดง "Check-in สำเร็จ at [Workplace]"</code></pre>
-
-      <h3>Flow C: Leave Request → Approval</h3>
-<pre><code>Employee เปิดหน้า "ขอลา"
-   ↓
-เลือก type, dates, half-day config → submit
-   ↓
-Server:
-  1. Validate dates ไม่ใช่วันหยุดประจำสัปดาห์
-  2. LeaveQuotaCalculator.calculateRemaining → >= days_count
-  3. append LeaveRequests (status=pending)
-  4. ส่ง notify Admin
-   ↓
-Admin approve / reject (พร้อม reason)
-   ↓
-Server update + notify Employee</code></pre>
-
-      <h3>Flow D: Monthly Timesheet</h3>
-<pre><code>ตลอดเดือน: CheckInEvents auto-populate
-   ↓
-วันที่ 25: ระบบส่ง reminder email
-   ↓
-Employee เปิด "Timesheet" → TimesheetAggregator แสดง rows
-   ↓
-Employee: edit, request adjustment, ใส่ OT, taxi, work desc
-   ↓
-กด Submit → status=pending
-   ↓
-Admin approve
-   ↓
-Server:
-  1. ExportRenderer.render → xlsx (ฝัง signature)
-  2. save Drive: /StaffManageApp/Exports/2026/05/
-  3. PDFConverter.convertAndStore → PDF
-  4. update TimesheetSubmissions
-  5. notify Employee</code></pre>
-
-      <h3>Flow E: Backfill Check-in</h3>
-<pre><code>Admin: Toggle "Backfill eligible" + เพิ่ม AJI workplace
-   ↓
-Employee check-in ตามปกติ (Flow B)
-   ↓
-GeoFenceService หา workplace ใกล้สุด → เจอ AJI
-   ↓
-ตอน aggregate timesheet:
-  - check_in_workplace.site_id != home_site_id
-  → auto-fill "Onsite AJI" ใน work_description</code></pre>
-    </section>
-
-    <!-- Testing -->
-    <section id="testing">
-      <h2>8. Testing Decisions</h2>
-
-      <h3>หลักการ</h3>
-      <div class="callout info">
-        <strong>ทดสอบ external behavior ไม่ใช่ internal implementation</strong>
-        Test คำตอบของ function ตาม input — ไม่ test ว่ามันเรียก function ไหน เปลี่ยน implementation ภายในแล้ว test ต้องไม่พัง ถ้า behavior เหมือนเดิม
-      </div>
-
-      <h3>Unit Test (Deep Modules)</h3>
-
-      <h4>1. GeoFenceService <span class="tag deep">HIGH PRIORITY</span></h4>
-      <ul>
-        <li>GPS ตรงกลาง workplace → return workplace</li>
-        <li>GPS ที่ขอบ radius (ใน-นอก) → boundary correctness</li>
-        <li>GPS นอก radius ทุก workplace → return null</li>
-        <li>หลาย workplace ทับซ้อน → return nearest</li>
-        <li>Workplace ว่าง → return null</li>
-      </ul>
-
-      <h4>2. LeaveQuotaCalculator <span class="tag deep">HIGH PRIORITY</span></h4>
-      <ul>
-        <li>Quota เต็ม → return ค่ามาตรฐาน</li>
-        <li>Approved request → หักถูก</li>
-        <li>Pending request → หักถูก</li>
-        <li>Rejected request → ไม่หัก</li>
-        <li>Half-day → หัก 0.5</li>
-        <li>เข้าใหม่ 1 ก.ค. → Annual = 3 (pro-rated)</li>
-        <li>Year boundary (30 ธ.ค. - 2 ม.ค.) → handle ถูก</li>
-        <li>Cancel pending → คืน quota</li>
-      </ul>
-
-      <h4>3. TimesheetAggregator <span class="tag deep">HIGH PRIORITY</span></h4>
-      <ul>
-        <li>ไม่มี check-in เลย → ทุก row ว่าง</li>
-        <li>Check-in/out ปกติ → row ครบ</li>
-        <li>ลืม check-out → row มี checkmark</li>
-        <li>Manual edit เวลาออก → priority สูงกว่า raw event</li>
-        <li>Backfill day → auto-fill "Onsite [Site]"</li>
-        <li>OT entry ครบทุก rate</li>
-        <li>Multi-check-in → first in + last out</li>
-      </ul>
-
-      <h4>4. ExportRenderer <span class="tag deep">MEDIUM PRIORITY</span></h4>
-      <ul>
-        <li>Render ทั้งเดือน → ทุก cell ตรง (snapshot)</li>
-        <li>OT หลาย rate → cells x1, x1.5, x2, x3 ถูก</li>
-        <li>Taxi amount → cell P ถูก</li>
-        <li>Admin signature → embedded ที่ Q44</li>
-      </ul>
-
-      <h3>Smoke Test เท่านั้น</h3>
-      <p><strong>AuthService, NotificationService, PDFConverter</strong> — พึ่ง Google API หนัก, mock ลำบาก, ทดสอบ manual end-to-end</p>
-      <p><strong>EmployeeRepository, LeaveService, TimesheetService</strong> (orchestration) — smoke test (happy path) พอ เพราะ logic หลักอยู่ใน deep modules</p>
-
-      <h3>Test Framework</h3>
-      <div class="callout success">
-        <strong>แนวทางแนะนำ</strong>
-        ดึง deep modules (GeoFence, LeaveQuota, TimesheetAggregator, ExportRenderer) ออกมาเขียนเป็น <code>.js</code> แล้ว test ด้วย <strong>Jest</strong> ใน local dev environment แล้ว copy กลับเข้า Apps Script — tooling ครบกว่าใช้ <code>gas-unit-test</code>
-      </div>
-    </section>
-
-    <!-- Out of Scope -->
-    <section id="out-of-scope">
-      <h2>9. Out of Scope (Phase 1)</h2>
-      <ol>
-        <li>Multi-site support — ทำเฉพาะ AIS</li>
-        <li>Multi-template export — Site อื่นที่ template ต่างกัน</li>
-        <li>WebAuthn / Biometric verification</li>
-        <li>Selfie verification</li>
-        <li>LINE Notification</li>
-        <li>Holiday Calendar</li>
-        <li>Auto OT calculation</li>
-        <li>Multi-pair check-in/out ในวันเดียว</li>
-        <li>Project code / task tracking</li>
-        <li>Quota override per employee</li>
-        <li>Expense categories อื่น (นอกจาก Taxi)</li>
-        <li>Carry-over leave ข้ามปี</li>
-        <li>Shift rotation / shift schedule รายวัน</li>
-        <li>Mobile native app</li>
-        <li>Payroll integration</li>
-        <li>Multi-language UI (TH only)</li>
-        <li>Forgot password flow</li>
-        <li>Late check-in / Early leave flag/penalty</li>
-        <li>Public holidays auto-block</li>
-        <li>Auto-approval — ทุก leave + timesheet ต้อง Admin approve</li>
-      </ol>
-    </section>
-
-    <!-- Further Notes -->
-    <section id="further-notes">
-      <h2>10. Further Notes</h2>
-    </section>
-
-    <section id="roadmap">
-      <h2>11. Phase 2 Roadmap</h2>
-      <table>
-        <tr><th>Priority</th><th>Feature</th></tr>
-        <tr><td>1</td><td>Multi-site rollout — ขยายไป site ที่ 2 พร้อม template engine</td></tr>
-        <tr><td>2</td><td>LINE Messaging API push noti (Light plan ฿599/เดือน)</td></tr>
-        <tr><td>3</td><td>Holiday Calendar + Auto OT rate detection</td></tr>
-        <tr><td>4</td><td>Backfill billing split (multi-site billing rule)</td></tr>
-        <tr><td>5</td><td>WebAuthn upgrade (ถ้า Device Binding ไม่พอ) — re-platform เป็น Next.js</td></tr>
-        <tr><td>6</td><td>Analytics dashboard — สรุปข้อมูลรายเดือน/รายไตรมาส</td></tr>
-        <tr><td>7</td><td>Mobile native app + push noti + HW serial number</td></tr>
-      </table>
-    </section>
-
-    <section id="risks">
-      <h2>12. Risks & Mitigations</h2>
-      <table>
-        <tr><th>Risk</th><th>Impact</th><th>Mitigation</th></tr>
-        <tr>
-          <td>Apps Script execution quota เกิน (6 min/exec, 90 min/day)</td>
-          <td><strong>High</strong></td>
-          <td>Architect ให้ operation หนัก (export, PDF) เป็น background job ผ่าน Triggers</td>
-        </tr>
-        <tr>
-          <td>Google Sheet เป็น database ที่ไม่ scale (max 10M cells)</td>
-          <td>Medium</td>
-          <td>Phase 1 = 39 × 365 × ~10 = ~140k cells/year → ปลอดภัย</td>
-        </tr>
-        <tr>
-          <td>Device binding ถูก bypass โดย clear localStorage</td>
-          <td>Medium</td>
-          <td>ต้อง Admin reset → audit log; ใช้ browser fingerprint เสริม</td>
-        </tr>
-        <tr>
-          <td>Admin คนเดียวเป็น bottleneck</td>
-          <td>Medium</td>
-          <td>UI batch approve + แจ้งเตือนทันที</td>
-        </tr>
-        <tr>
-          <td>GPS บน iOS Safari แม่นยำต่ำในร่ม</td>
-          <td>Medium</td>
-          <td>กำหนด radius กว้างพอ (~100m) + adjustment flow ถ้า GPS เพี้ยน</td>
-        </tr>
-        <tr>
-          <td>User เปลี่ยน iPhone → device binding หาย</td>
-          <td>Low</td>
-          <td>Admin reset flow มีอยู่แล้ว</td>
-        </tr>
-        <tr>
-          <td>Template AIS เปลี่ยน format → export พัง</td>
-          <td><strong>High</strong></td>
-          <td>Snapshot test ExportRenderer + version control template ใน Drive</td>
-        </tr>
-      </table>
-    </section>
-
-    <section id="config">
-      <h2>13. Configuration Checklist (Admin Setup)</h2>
-      <ol>
-        <li>Google Workspace policy: บังคับ 2FA สำหรับทุก account</li>
-        <li>Google Drive: สร้าง folder <code>/StaffManageApp/</code> + share ให้ Admin</li>
-        <li>Google Sheet: สร้าง spreadsheet ใหม่ตาม schema + share permission</li>
-        <li>Upload ลายเซ็น Admin (PNG transparent) ใน Settings</li>
-        <li>Upload AIS xlsx template ใน Settings (อ้าง <code>template_drive_id</code> ใน Sites sheet)</li>
-        <li>Set quota config ใน Settings (Annual=6, Sick=30, Personal=4)</li>
-        <li>Add workplaces ของ AIS ทั้งหมด (พิกัด + radius)</li>
-        <li>Add employees ทีละคน</li>
-      </ol>
-    </section>
-
-    <section id="metrics">
-      <h2>14. Success Metrics (Phase 1)</h2>
-      <ul>
-        <li>100% ของพนักงาน 39 คนใช้งานระบบภายใน 1 เดือนหลัง launch</li>
-        <li>เวลาที่ Admin ใช้ทำ timesheet ส่ง PRTR ลดลง <strong>&gt; 50%</strong></li>
-        <li>ไม่มี timesheet ส่งช้ากว่า deadline PRTR</li>
-        <li>ไม่มี report การฝากเพื่อน check-in ที่ตรวจพบจาก audit log</li>
-        <li>Leave quota error rate (ขอเกิน / quota ผิด) = <strong>0</strong></li>
-      </ul>
-    </section>
-
-    <section id="open-questions">
-      <h2>15. Open Questions for Implementation</h2>
-      <div class="callout warning">
-        <strong>ต้อง confirm ก่อนเริ่ม implement</strong>
-        <ol>
-          <li><strong>AIS xlsx template</strong> — confirm กับ PRTR ว่าใช้ template เวอร์ชันนี้แน่นอน (ไฟล์ <code>แบบฟอร์มใบลงเวลา ( TimeSheet ) Site AIS.xlsx</code>)</li>
-          <li><strong>Email recipient</strong> สำหรับส่ง timesheet ให้ PRTR — confirm: <code>preeyaporn.ph@prtr.com</code></li>
-          <li><strong>ใครเป็น Admin คนแรก</strong> — ต้อง onboarding ก่อนใครคนอื่น</li>
-          <li><strong>Domain / URL</strong> สำหรับ web app — apps script default หรือ custom domain?</li>
-          <li><strong>Backup strategy</strong> ของ Google Sheet — manual export weekly? หรือ Google Takeout?</li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- UI Mockups -->
-    <section id="mockups">
-      <h2>16. UI Mockups (ตัวอย่างหน้าจอ)</h2>
-      <p>Wireframe ของหน้าจอหลัก — แสดง layout และ UX flow โดยประมาณ ใช้เป็น reference สำหรับ implementation</p>
-
-      <style>
-        .mockup-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 40px 32px;
-          margin: 32px 0;
-        }
-        .mockup-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 12px;
-        }
-        .mockup-label {
-          font-size: 15px;
-          font-weight: 600;
-          color: var(--text-muted);
-          text-align: center;
-        }
-        .phone {
-          width: 280px;
-          background: #fff;
-          border-radius: 32px;
-          border: 6px solid #1e293b;
-          box-shadow: 0 12px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
-          overflow: hidden;
-          font-size: 13px;
-        }
-        .phone-notch {
-          background: #1e293b;
-          height: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .phone-notch-pill {
-          width: 60px; height: 8px;
-          background: #334155;
-          border-radius: 4px;
-        }
-        .phone-status {
-          background: #f8fafc;
-          padding: 4px 14px;
-          display: flex;
-          justify-content: space-between;
-          font-size: 11px;
-          color: var(--text-muted);
-          border-bottom: 1px solid var(--border);
-        }
-        .phone-body { padding: 0; background: #f8fafc; min-height: 500px; }
-
-        /* App header */
-        .app-header {
-          background: var(--primary);
-          color: white;
-          padding: 12px 16px 10px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .app-header h4 { margin: 0; font-size: 14px; font-weight: 600; }
-        .app-header .icon { font-size: 18px; cursor: pointer; }
-        .app-header small { font-size: 11px; opacity: 0.8; }
-
-        /* Bottom Nav */
-        .bottom-nav {
-          background: white;
-          border-top: 1px solid var(--border);
-          display: flex;
-          padding: 8px 0 4px;
-        }
-        .nav-item {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 2px;
-          font-size: 10px;
-          color: var(--text-muted);
-          cursor: pointer;
-        }
-        .nav-item.active { color: var(--primary); }
-        .nav-item .nav-icon { font-size: 18px; }
-
-        /* Cards */
-        .card {
-          background: white;
-          border-radius: 12px;
-          margin: 10px 12px;
-          padding: 12px 14px;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-        }
-        .card-title { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-        .card-value { font-size: 18px; font-weight: 700; color: var(--primary-dark); }
-        .card-sub { font-size: 11px; color: var(--text-muted); }
-
-        .quota-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 12px; }
-        .quota-card {
-          background: white;
-          border-radius: 10px;
-          padding: 8px 6px;
-          text-align: center;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.07);
-          border-top: 3px solid var(--primary);
-        }
-        .quota-card.sick { border-color: #f59e0b; }
-        .quota-card.personal { border-color: #8b5cf6; }
-        .quota-num { font-size: 18px; font-weight: 700; color: var(--primary-dark); }
-        .quota-card.sick .quota-num { color: #92400e; }
-        .quota-card.personal .quota-num { color: #6d28d9; }
-        .quota-of { font-size: 10px; color: var(--text-muted); }
-        .quota-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-
-        /* Big check-in button */
-        .checkin-btn {
-          background: linear-gradient(135deg, #2563eb, #1d4ed8);
-          color: white;
-          border-radius: 50%;
-          width: 110px; height: 110px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          margin: 16px auto 8px;
-          box-shadow: 0 6px 20px rgba(37,99,235,0.35);
-          cursor: pointer;
-        }
-        .checkin-btn .btn-icon { font-size: 32px; }
-        .checkin-btn .btn-label { font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
-        .checkin-time {
-          text-align: center;
-          font-size: 22px;
-          font-weight: 700;
-          color: var(--text);
-          letter-spacing: 1px;
-          margin: 4px 0 0;
-        }
-        .checkin-date { text-align: center; font-size: 11px; color: var(--text-muted); }
-
-        /* Activity list */
-        .act-list { margin: 8px 12px; }
-        .act-item {
-          background: white;
-          border-radius: 8px;
-          padding: 8px 10px;
-          margin-bottom: 6px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 12px;
-        }
-        .act-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .act-dot.green { background: var(--success); }
-        .act-dot.blue { background: var(--primary); }
-        .act-dot.orange { background: var(--warning); }
-        .act-right { margin-left: auto; font-size: 11px; color: var(--text-muted); }
-
-        /* Section label */
-        .sec-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 10px 12px 4px; }
-
-        /* Badge */
-        .badge {
-          display: inline-block;
-          padding: 2px 7px;
-          border-radius: 10px;
-          font-size: 10px;
-          font-weight: 600;
-        }
-        .badge.pending { background: #fef3c7; color: #92400e; }
-        .badge.approved { background: #dcfce7; color: #166534; }
-        .badge.rejected { background: #fee2e2; color: #991b1b; }
-        .badge.primary { background: #dbeafe; color: #1e40af; }
-
-        /* Form elements */
-        .form-group { margin: 8px 12px; }
-        .form-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
-        .form-input {
-          width: 100%;
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 8px 10px;
-          font-size: 13px;
-          background: white;
-          box-sizing: border-box;
-        }
-        .form-select {
-          width: 100%;
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 8px 10px;
-          font-size: 13px;
-          background: white;
-          box-sizing: border-box;
-          color: var(--text);
-        }
-        .tab-group { display: flex; margin: 8px 12px; gap: 6px; }
-        .tab-btn {
-          flex: 1;
-          padding: 7px;
-          border-radius: 8px;
-          font-size: 12px;
-          text-align: center;
-          cursor: pointer;
-          background: white;
-          border: 1px solid var(--border);
-          color: var(--text-muted);
-        }
-        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: 600; }
-        .half-day-row { display: flex; gap: 6px; margin: 8px 12px; }
-        .half-btn {
-          flex: 1; padding: 7px; border-radius: 8px; font-size: 11px; text-align: center;
-          background: white; border: 1px solid var(--border); color: var(--text-muted); cursor: pointer;
-        }
-        .half-btn.active { background: #eff6ff; border-color: var(--primary); color: var(--primary); font-weight: 600; }
-        .submit-btn {
-          margin: 10px 12px;
-          background: var(--primary);
-          color: white;
-          border-radius: 10px;
-          padding: 11px;
-          text-align: center;
-          font-weight: 600;
-          font-size: 13px;
-          cursor: pointer;
-        }
-
-        /* Timesheet table */
-        .ts-table { margin: 6px; width: calc(100% - 12px); font-size: 10px; }
-        .ts-table th { background: var(--primary); color: white; padding: 4px 3px; text-align: center; font-size: 9px; }
-        .ts-table td { padding: 3px; text-align: center; border-bottom: 1px solid var(--border); background: white; }
-        .ts-table tr:nth-child(even) td { background: #f8fafc; }
-        .ts-late { color: var(--danger); font-size: 9px; }
-        .ts-ot { color: var(--warning); font-weight: 600; }
-
-        /* GPS screen */
-        .gps-screen {
-          display: flex; flex-direction: column; align-items: center;
-          justify-content: center; padding: 30px 20px; text-align: center;
-          min-height: 420px; background: white;
-        }
-        .gps-ring {
-          width: 100px; height: 100px; border-radius: 50%;
-          border: 3px solid #dbeafe;
-          display: flex; align-items: center; justify-content: center;
-          margin-bottom: 16px; position: relative;
-        }
-        .gps-ring::before {
-          content: '';
-          position: absolute;
-          width: 120px; height: 120px;
-          border-radius: 50%;
-          border: 2px solid #bfdbfe;
-          opacity: 0.5;
-        }
-        .gps-ring::after {
-          content: '';
-          position: absolute;
-          width: 140px; height: 140px;
-          border-radius: 50%;
-          border: 1px solid #dbeafe;
-          opacity: 0.3;
-        }
-        .gps-icon { font-size: 36px; }
-        .gps-success { background: #dcfce7; border-color: #86efac; }
-        .gps-success .gps-icon-wrap { color: #16a34a; }
-
-        /* Admin list */
-        .admin-item {
-          background: white;
-          margin: 6px 10px;
-          border-radius: 10px;
-          padding: 10px 12px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .admin-item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-        .admin-item-name { font-weight: 600; font-size: 13px; }
-        .admin-item-detail { font-size: 11px; color: var(--text-muted); }
-        .admin-actions { display: flex; gap: 6px; margin-top: 8px; }
-        .btn-approve {
-          flex: 1; background: var(--success); color: white;
-          border-radius: 7px; padding: 6px; text-align: center; font-size: 11px; font-weight: 600; cursor: pointer;
-        }
-        .btn-reject {
-          flex: 1; background: #fee2e2; color: var(--danger);
-          border-radius: 7px; padding: 6px; text-align: center; font-size: 11px; font-weight: 600; cursor: pointer;
-        }
-
-        /* Login screen */
-        .login-screen {
-          display: flex; flex-direction: column; align-items: center;
-          justify-content: center; min-height: 500px; padding: 30px 20px;
-          background: white; text-align: center;
-        }
-        .login-logo {
-          width: 72px; height: 72px; background: var(--primary);
-          border-radius: 20px; display: flex; align-items: center; justify-content: center;
-          font-size: 36px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(37,99,235,0.25);
-        }
-        .login-title { font-size: 20px; font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; }
-        .login-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 32px; }
-        .google-btn {
-          display: flex; align-items: center; gap: 10px;
-          background: white; border: 1.5px solid var(--border);
-          border-radius: 10px; padding: 11px 20px; font-size: 13px; font-weight: 600;
-          color: var(--text); cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          width: 100%;
-        }
-        .google-icon {
-          width: 20px; height: 20px; border-radius: 50%;
-          background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc05, #34a853);
-        }
-        .login-note { font-size: 10px; color: var(--text-muted); margin-top: 20px; line-height: 1.5; }
-
-        /* Month nav */
-        .month-nav {
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 8px 12px; background: white; border-bottom: 1px solid var(--border);
-        }
-        .month-nav-btn { font-size: 16px; cursor: pointer; color: var(--primary); padding: 2px 8px; }
-        .month-nav-title { font-weight: 700; font-size: 14px; }
-        .ts-summary {
-          display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 10px;
-        }
-        .ts-sum-card {
-          background: white; border-radius: 8px; padding: 7px 6px; text-align: center;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-        }
-        .ts-sum-val { font-size: 15px; font-weight: 700; color: var(--primary-dark); }
-        .ts-sum-lbl { font-size: 9px; color: var(--text-muted); }
-
-        /* Notification dot */
-        .notif-dot {
-          display: inline-block; width: 7px; height: 7px; background: #ef4444;
-          border-radius: 50%; margin-left: 3px; vertical-align: middle;
-        }
-        .page-section-header {
-          background: #f8fafc;
-          border-bottom: 1px solid var(--border);
-          padding: 32px 0 0;
-          margin-bottom: 16px;
-        }
-        .mockup-desc {
-          font-size: 13px;
-          color: var(--text-muted);
-          background: var(--bg-alt);
-          border-radius: 8px;
-          padding: 10px 14px;
-          margin: 0 0 16px;
-          border-left: 3px solid var(--border);
-          max-width: 280px;
-          text-align: left;
-        }
-      </style>
-
-      <!-- Row 1: Employee screens -->
-      <h3>Employee — หน้าจอหลัก</h3>
-      <div class="mockup-grid">
-
-        <!-- Screen 1: Login -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="login-screen">
-                <div class="login-logo">👤</div>
-                <div class="login-title">Staff Manage</div>
-                <div class="login-sub">G-able — Site AIS</div>
-                <div class="google-btn">
-                  <div class="google-icon"></div>
-                  เข้าสู่ระบบด้วย Google
-                </div>
-                <div class="login-note">
-                  ใช้ G-able email ของคุณเท่านั้น<br>
-                  ระบบจะขอลงทะเบียนอุปกรณ์ครั้งแรก
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">1. หน้า Login</div>
-          <div class="mockup-desc">Google OAuth เท่านั้น ต้องเป็น email G-able ที่ Admin ลงทะเบียนไว้</div>
-        </div>
-
-        <!-- Screen 2: Employee Dashboard -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header">
-                <div>
-                  <h4>สวัสดี, สมชาย 👋</h4>
-                  <small>จันทร์ที่ 20 พ.ค. 2026</small>
-                </div>
-                <span class="icon">🔔<span class="notif-dot"></span></span>
-              </div>
-              <div class="checkin-btn">
-                <span class="btn-icon">📍</span>
-                <span class="btn-label">CHECK-IN</span>
-              </div>
-              <div class="checkin-time">08:47 น.</div>
-              <div class="checkin-date">ยังไม่ได้ check-in วันนี้</div>
-
-              <div class="sec-label">วันลาคงเหลือ</div>
-              <div class="quota-grid">
-                <div class="quota-card">
-                  <div class="quota-num">4</div>
-                  <div class="quota-of">จาก 6</div>
-                  <div class="quota-label">พักร้อน</div>
-                </div>
-                <div class="quota-card sick">
-                  <div class="quota-num">28</div>
-                  <div class="quota-of">จาก 30</div>
-                  <div class="quota-label">ลาป่วย</div>
-                </div>
-                <div class="quota-card personal">
-                  <div class="quota-num">3</div>
-                  <div class="quota-of">จาก 4</div>
-                  <div class="quota-label">ลากิจ</div>
-                </div>
-              </div>
-
-              <div class="sec-label">กิจกรรมล่าสุด</div>
-              <div class="act-list">
-                <div class="act-item">
-                  <div class="act-dot green"></div>
-                  <span>Check-in 08:32 (เมื่อวาน)</span>
-                  <span class="act-right">AIS อาคาร A</span>
-                </div>
-                <div class="act-item">
-                  <div class="act-dot orange"></div>
-                  <span>ลาพักร้อน 21 พ.ค.</span>
-                  <span class="act-right"><span class="badge pending">รออนุมัติ</span></span>
-                </div>
-              </div>
-              <div class="bottom-nav">
-                <div class="nav-item active"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">📋</span>Timesheet</div>
-                <div class="nav-item"><span class="nav-icon">🌴</span>วันลา</div>
-                <div class="nav-item"><span class="nav-icon">👤</span>โปรไฟล์</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">2. Dashboard (Employee)</div>
-          <div class="mockup-desc">หน้าหลัก — ปุ่ม Check-in ใหญ่ชัดเจน, quota วันลา, กิจกรรมล่าสุด</div>
-        </div>
-
-        <!-- Screen 3: Check-in Success -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header">
-                <h4>Check-in</h4>
-              </div>
-              <div class="gps-screen">
-                <div class="gps-ring gps-success">
-                  <span style="font-size:40px">✅</span>
-                </div>
-                <div style="font-size:18px;font-weight:700;color:#16a34a;margin-bottom:6px">Check-in สำเร็จ!</div>
-                <div style="font-size:22px;font-weight:700;letter-spacing:2px;color:var(--primary-dark)">08:47 น.</div>
-                <div style="font-size:12px;color:var(--text-muted);margin:4px 0 20px">วันจันทร์ที่ 20 พฤษภาคม 2569</div>
-                <div class="card" style="width:100%;text-align:left;margin:0">
-                  <div class="card-title">📍 สถานที่ที่ตรวจพบ</div>
-                  <div style="font-weight:600;font-size:13px;margin-top:2px">AIS อาคาร A พหลโยธิน</div>
-                  <div style="font-size:11px;color:var(--text-muted);margin-top:4px">อยู่ในรัศมี 47 เมตร (จาก 100 เมตร)</div>
-                </div>
-                <div style="margin-top:16px;font-size:11px;color:var(--text-muted)">
-                  📧 แจ้งเตือนส่งไปที่ email ของคุณแล้ว
-                </div>
-                <div class="submit-btn" style="margin:16px 0 0;width:100%">กลับหน้าหลัก</div>
-              </div>
-              <div class="bottom-nav">
-                <div class="nav-item active"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">📋</span>Timesheet</div>
-                <div class="nav-item"><span class="nav-icon">🌴</span>วันลา</div>
-                <div class="nav-item"><span class="nav-icon">👤</span>โปรไฟล์</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">3. Check-in สำเร็จ</div>
-          <div class="mockup-desc">แสดง workplace ที่ตรวจพบ, ระยะห่าง, เวลา check-in และส่ง email alert อัตโนมัติ</div>
-        </div>
-
-      </div>
-
-      <!-- Row 2: Leave + Timesheet -->
-      <h3>Employee — วันลา & Timesheet</h3>
-      <div class="mockup-grid">
-
-        <!-- Screen 4: Leave Request -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header"><h4>ขอลาใหม่</h4></div>
-              <div style="padding:10px 0 0">
-                <div class="sec-label">ประเภทการลา</div>
-                <div class="tab-group">
-                  <div class="tab-btn active">🌴 พักร้อน<br><small style="font-size:9px">เหลือ 4 วัน</small></div>
-                  <div class="tab-btn">🤒 ป่วย<br><small style="font-size:9px">เหลือ 28 วัน</small></div>
-                  <div class="tab-btn">📝 กิจ<br><small style="font-size:9px">เหลือ 3 วัน</small></div>
-                </div>
-                <div class="form-group">
-                  <div class="form-label">วันที่ลา</div>
-                  <input class="form-input" value="21 พฤษภาคม 2026" readonly style="color:var(--text)">
-                </div>
-                <div class="sec-label">ระยะเวลา</div>
-                <div class="half-day-row">
-                  <div class="half-btn active">เต็มวัน<br><small>1.0 วัน</small></div>
-                  <div class="half-btn">เช้า<br><small>08:30–12:00</small></div>
-                  <div class="half-btn">บ่าย<br><small>13:00–17:30</small></div>
-                </div>
-                <div class="form-group">
-                  <div class="form-label">เหตุผล</div>
-                  <textarea class="form-input" rows="2" style="resize:none;font-family:inherit">ธุระส่วนตัว</textarea>
-                </div>
-                <div class="card" style="margin-top:0;padding:8px 12px">
-                  <div style="display:flex;justify-content:space-between;font-size:12px">
-                    <span style="color:var(--text-muted)">หักหลังอนุมัติ</span>
-                    <span style="font-weight:700;color:var(--primary)">-1.0 วัน (เหลือ 3)</span>
-                  </div>
-                </div>
-                <div class="submit-btn">ส่งคำขอลา</div>
-              </div>
-              <div class="bottom-nav">
-                <div class="nav-item"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">📋</span>Timesheet</div>
-                <div class="nav-item active"><span class="nav-icon">🌴</span>วันลา</div>
-                <div class="nav-item"><span class="nav-icon">👤</span>โปรไฟล์</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">4. ขอลา</div>
-          <div class="mockup-desc">เลือก type, วันที่, เต็มวัน/ครึ่งวัน (เช้า 08:30-12:00 / บ่าย 13:00-17:30), ระบุเหตุผล</div>
-        </div>
-
-        <!-- Screen 5: Timesheet -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header"><h4>Timesheet</h4></div>
-              <div class="month-nav">
-                <span class="month-nav-btn">‹</span>
-                <span class="month-nav-title">พฤษภาคม 2026</span>
-                <span class="month-nav-btn">›</span>
-              </div>
-              <div class="ts-summary">
-                <div class="ts-sum-card">
-                  <div class="ts-sum-val">18</div>
-                  <div class="ts-sum-lbl">วันทำงาน</div>
-                </div>
-                <div class="ts-sum-card">
-                  <div class="ts-sum-val" style="color:#f59e0b">4.5h</div>
-                  <div class="ts-sum-lbl">รวม OT</div>
-                </div>
-                <div class="ts-sum-card">
-                  <div class="ts-sum-val" style="color:#8b5cf6">฿150</div>
-                  <div class="ts-sum-lbl">ค่า Taxi</div>
-                </div>
-              </div>
-              <div style="overflow-x:auto;margin:0 6px">
-                <table class="ts-table" border="0">
-                  <thead>
-                    <tr>
-                      <th>วัน</th><th>เข้า</th><th>ออก</th><th>ชม.</th><th>OT</th><th>Taxi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>19</td><td>08:32</td><td>17:45</td><td>9</td><td class="ts-ot">1.5</td><td>-</td></tr>
-                    <tr><td>20</td><td>08:47</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
-                    <tr style="background:#fef3c7"><td colspan="6" style="text-align:left;padding:3px 6px;font-size:10px;background:#fef3c7">21 🌴 ลาพักร้อน (รออนุมัติ)</td></tr>
-                    <tr style="background:#f8fafc"><td colspan="6" style="text-align:left;padding:3px 6px;font-size:10px;color:#94a3b8">22 เสาร์ (หยุด)</td></tr>
-                    <tr style="background:#f8fafc"><td colspan="6" style="text-align:left;padding:3px 6px;font-size:10px;color:#94a3b8">23 อาทิตย์ (หยุด)</td></tr>
-                    <tr><td>16</td><td>08:28</td><td>18:30</td><td>9</td><td class="ts-ot">1.5</td><td class="ts-ot">฿150</td></tr>
-                    <tr><td>15</td><td>08:55</td><td>17:30</td><td>8</td><td>-</td><td>-</td></tr>
-                    <tr><td style="color:var(--danger)">14</td><td colspan="5" style="color:var(--danger);font-size:9px;text-align:left">⚠️ ลืม check-in — ขออนุมัติ</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="submit-btn" style="margin-top:8px">Submit Timesheet</div>
-              <div class="bottom-nav">
-                <div class="nav-item"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item active"><span class="nav-icon">📋</span>Timesheet</div>
-                <div class="nav-item"><span class="nav-icon">🌴</span>วันลา</div>
-                <div class="nav-item"><span class="nav-icon">👤</span>โปรไฟล์</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">5. Timesheet รายเดือน</div>
-          <div class="mockup-desc">ตารางรายวัน auto-fill จาก check-in, ใส่ OT + Taxi ได้, แสดงวันลา/หยุด/ปัญหา</div>
-        </div>
-
-        <!-- Screen 6: Leave History -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header"><h4>ประวัติการลา</h4></div>
-              <div class="tab-group" style="margin-top:10px">
-                <div class="tab-btn active">ทั้งหมด</div>
-                <div class="tab-btn">รออนุมัติ</div>
-                <div class="tab-btn">อนุมัติแล้ว</div>
-              </div>
-              <div class="act-list">
-                <div class="admin-item">
-                  <div class="admin-item-header">
-                    <div>
-                      <div class="admin-item-name">🌴 ลาพักร้อน</div>
-                      <div class="admin-item-detail">21 พ.ค. 2026 · 1.0 วัน</div>
-                    </div>
-                    <span class="badge pending">รออนุมัติ</span>
-                  </div>
-                  <div style="font-size:11px;color:var(--text-muted)">เหตุผล: ธุระส่วนตัว</div>
-                </div>
-                <div class="admin-item">
-                  <div class="admin-item-header">
-                    <div>
-                      <div class="admin-item-name">🤒 ลาป่วย</div>
-                      <div class="admin-item-detail">5 พ.ค. 2026 · 1.0 วัน</div>
-                    </div>
-                    <span class="badge approved">อนุมัติ</span>
-                  </div>
-                  <div style="font-size:11px;color:var(--text-muted)">เหตุผล: ไม่สบาย มีไข้</div>
-                </div>
-                <div class="admin-item">
-                  <div class="admin-item-header">
-                    <div>
-                      <div class="admin-item-name">🌴 ลาพักร้อน</div>
-                      <div class="admin-item-detail">28–29 เม.ย. 2026 · 2.0 วัน</div>
-                    </div>
-                    <span class="badge approved">อนุมัติ</span>
-                  </div>
-                </div>
-                <div class="admin-item">
-                  <div class="admin-item-header">
-                    <div>
-                      <div class="admin-item-name">📝 ลากิจ</div>
-                      <div class="admin-item-detail">3 เม.ย. 2026 · 0.5 วัน (เช้า)</div>
-                    </div>
-                    <span class="badge rejected">ไม่อนุมัติ</span>
-                  </div>
-                  <div style="font-size:11px;color:var(--danger)">เหตุผล: งานเร่งด่วน</div>
-                </div>
-              </div>
-              <div class="bottom-nav">
-                <div class="nav-item"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">📋</span>Timesheet</div>
-                <div class="nav-item active"><span class="nav-icon">🌴</span>วันลา</div>
-                <div class="nav-item"><span class="nav-icon">👤</span>โปรไฟล์</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">6. ประวัติการลา</div>
-          <div class="mockup-desc">ดูสถานะทุกคำขอ (pending/approved/rejected) พร้อมเหตุผลจาก Admin</div>
-        </div>
-
-      </div>
-
-      <!-- Row 3: Admin screens -->
-      <h3>Admin — หน้าจอจัดการ</h3>
-      <div class="mockup-grid">
-
-        <!-- Screen 7: Admin Leave Approval -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header">
-                <div><h4>Admin Panel</h4><small>สมหมาย (Admin)</small></div>
-                <span class="icon">🔔<span class="notif-dot"></span></span>
-              </div>
-              <div class="tab-group" style="margin-top:10px">
-                <div class="tab-btn active">🌴 ลา <span class="badge primary" style="margin-left:4px">3</span></div>
-                <div class="tab-btn">📋 Timesheet <span class="badge primary" style="margin-left:4px">12</span></div>
-                <div class="tab-btn">🔧 จัดการ</div>
-              </div>
-              <div class="sec-label">รายการรออนุมัติ (3)</div>
-
-              <div class="admin-item">
-                <div class="admin-item-header">
-                  <div>
-                    <div class="admin-item-name">สมชาย รักงาน</div>
-                    <div class="admin-item-detail">🌴 พักร้อน · 21 พ.ค. · 1.0 วัน</div>
-                    <div class="admin-item-detail">เหลือ: 4 → 3 วัน</div>
-                  </div>
-                  <span class="badge pending">pending</span>
-                </div>
-                <div class="admin-actions">
-                  <div class="btn-approve">✓ อนุมัติ</div>
-                  <div class="btn-reject">✗ ไม่อนุมัติ</div>
-                </div>
-              </div>
-
-              <div class="admin-item">
-                <div class="admin-item-header">
-                  <div>
-                    <div class="admin-item-name">วิภา สุขใจ</div>
-                    <div class="admin-item-detail">🤒 ลาป่วย · 20 พ.ค. · 1.0 วัน (ย้อนหลัง)</div>
-                    <div class="admin-item-detail">เหลือ: 29 → 28 วัน</div>
-                  </div>
-                  <span class="badge pending">pending</span>
-                </div>
-                <div class="admin-actions">
-                  <div class="btn-approve">✓ อนุมัติ</div>
-                  <div class="btn-reject">✗ ไม่อนุมัติ</div>
-                </div>
-              </div>
-
-              <div class="admin-item">
-                <div class="admin-item-header">
-                  <div>
-                    <div class="admin-item-name">ประสิทธิ์ ดีมาก</div>
-                    <div class="admin-item-detail">📝 ลากิจ · 22 พ.ค. · 0.5 วัน (บ่าย)</div>
-                    <div class="admin-item-detail">เหลือ: 3 → 2.5 วัน</div>
-                  </div>
-                  <span class="badge pending">pending</span>
-                </div>
-                <div class="admin-actions">
-                  <div class="btn-approve">✓ อนุมัติ</div>
-                  <div class="btn-reject">✗ ไม่อนุมัติ</div>
-                </div>
-              </div>
-
-              <div class="bottom-nav">
-                <div class="nav-item active"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">👥</span>พนักงาน</div>
-                <div class="nav-item"><span class="nav-icon">📊</span>รายงาน</div>
-                <div class="nav-item"><span class="nav-icon">⚙️</span>ตั้งค่า</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">7. Admin — อนุมัติการลา</div>
-          <div class="mockup-desc">เห็น quota เหลือก่อน-หลัง, อนุมัติ/ปฏิเสธในคลิกเดียว, รองรับ batch</div>
-        </div>
-
-        <!-- Screen 8: Admin Timesheet List -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header"><h4>Timesheet — พ.ค. 2026</h4></div>
-              <div class="tab-group" style="margin-top:10px">
-                <div class="tab-btn">🌴 ลา</div>
-                <div class="tab-btn active">📋 Timesheet <span class="badge primary" style="margin-left:4px">12</span></div>
-                <div class="tab-btn">🔧 จัดการ</div>
-              </div>
-              <div class="ts-summary" style="margin:8px 10px">
-                <div class="ts-sum-card"><div class="ts-sum-val" style="color:var(--success)">27</div><div class="ts-sum-lbl">อนุมัติแล้ว</div></div>
-                <div class="ts-sum-card"><div class="ts-sum-val" style="color:var(--warning)">12</div><div class="ts-sum-lbl">รออนุมัติ</div></div>
-                <div class="ts-sum-card"><div class="ts-sum-val" style="color:var(--text-muted)">0</div><div class="ts-sum-lbl">ยังไม่ส่ง</div></div>
-              </div>
-              <div class="sec-label">รออนุมัติ — เรียงตาม submit</div>
-              <div style="margin:0 10px">
-                <div class="admin-item" style="margin:0 0 6px">
-                  <div class="admin-item-header">
-                    <div>
-                      <div class="admin-item-name">สมชาย รักงาน</div>
-                      <div class="admin-item-detail">20 วันทำงาน · OT 6h · Taxi ฿300</div>
-                      <div class="admin-item-detail" style="color:var(--primary)">submit เมื่อ 30 เม.ย. 14:22</div>
-                    </div>
-                    <span class="badge pending">pending</span>
-                  </div>
-                  <div class="admin-actions">
-                    <div class="btn-approve">✓ อนุมัติ + Export</div>
-                    <div class="btn-reject" style="flex:0.4">✗</div>
-                  </div>
-                </div>
-                <div class="admin-item" style="margin:0 0 6px">
-                  <div class="admin-item-header">
-                    <div>
-                      <div class="admin-item-name">วิภา สุขใจ</div>
-                      <div class="admin-item-detail">19 วันทำงาน · OT 0h · Taxi ฿0</div>
-                      <div class="admin-item-detail" style="color:var(--primary)">submit เมื่อ 30 เม.ย. 11:05</div>
-                    </div>
-                    <span class="badge pending">pending</span>
-                  </div>
-                  <div class="admin-actions">
-                    <div class="btn-approve">✓ อนุมัติ + Export</div>
-                    <div class="btn-reject" style="flex:0.4">✗</div>
-                  </div>
-                </div>
-              </div>
-              <div class="submit-btn" style="background:var(--success)">✓ อนุมัติทั้งหมด (Batch)</div>
-              <div class="bottom-nav">
-                <div class="nav-item active"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">👥</span>พนักงาน</div>
-                <div class="nav-item"><span class="nav-icon">📊</span>รายงาน</div>
-                <div class="nav-item"><span class="nav-icon">⚙️</span>ตั้งค่า</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">8. Admin — Approve Timesheet</div>
-          <div class="mockup-desc">สรุปแต่ละคน, approve + export xlsx/PDF ในขั้นตอนเดียว, batch approve ทั้งหมด</div>
-        </div>
-
-        <!-- Screen 9: Device Out of Range / Block -->
-        <div class="mockup-item">
-          <div class="phone">
-            <div class="phone-notch"><div class="phone-notch-pill"></div></div>
-            <div class="phone-status"><span>09:41</span><span>📶 🔋</span></div>
-            <div class="phone-body">
-              <div class="app-header"><h4>Check-in</h4></div>
-              <div class="gps-screen">
-                <div class="gps-ring" style="border-color:#fecaca;background:#fef2f2">
-                  <span style="font-size:40px">📍</span>
-                </div>
-                <div style="font-size:17px;font-weight:700;color:var(--danger);margin-bottom:8px">ไม่สามารถ Check-in ได้</div>
-                <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
-                  GPS ตำแหน่งปัจจุบันอยู่นอกรัศมี<br>ของทุก Workplace ที่ท่านถูก assign
-                </div>
-                <div class="card" style="width:100%;text-align:left;margin:0;background:#fef2f2;border:1px solid #fecaca">
-                  <div style="font-size:12px;font-weight:600;color:var(--danger);margin-bottom:8px">📍 ระยะห่างจาก Workplace</div>
-                  <div style="font-size:11px;color:var(--text-muted)">AIS อาคาร A: 850 เมตร (≥ 100m)</div>
-                  <div style="font-size:11px;color:var(--text-muted)">AIS อาคาร B: 1.2 กม.</div>
-                </div>
-                <div style="margin-top:20px;font-size:11px;color:var(--text-muted);line-height:1.6;text-align:center">
-                  ต้องอยู่ในรัศมี 100 เมตร ของ Workplace<br>
-                  หากมีปัญหากรุณาติดต่อ Admin
-                </div>
-                <div class="submit-btn" style="margin:16px 0 0;width:100%;background:#64748b">ลองอีกครั้ง</div>
-              </div>
-              <div class="bottom-nav">
-                <div class="nav-item active"><span class="nav-icon">🏠</span>หน้าหลัก</div>
-                <div class="nav-item"><span class="nav-icon">📋</span>Timesheet</div>
-                <div class="nav-item"><span class="nav-icon">🌴</span>วันลา</div>
-                <div class="nav-item"><span class="nav-icon">👤</span>โปรไฟล์</div>
-              </div>
-            </div>
-          </div>
-          <div class="mockup-label">9. Check-in ถูก Block (นอกรัศมี)</div>
-          <div class="mockup-desc">แสดงระยะห่างจากทุก Workplace ที่ assign, block ทันที ไม่มีปุ่ม override</div>
-        </div>
-
-      </div>
-    </section>
-
-    <footer>
-      <p>End of PRD · Generated 2026-05-20 · Staff Manage App Phase 1</p>
-    </footer>
-
-  </main>
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#52c878"></span>มีที่ว่าง</span>
+      <span><span class="legend-dot" style="background:#ffb84d"></span>ใกล้เต็ม</span>
+      <span><span class="legend-dot" style="background:#ff5e8a"></span>เต็ม / Backfill</span>
+    </div>
+  </div>
+
+  <div id="grid" class="grid">
+    <div class="loader" style="grid-column:1/-1">
+      <div class="spinner"></div>
+      <div style="margin-top:12px">กำลังโหลดข้อมูลจาก Google Sheet...</div>
+    </div>
+  </div>
 </div>
 
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head" id="modalHead">
+      <button class="close" onclick="closeModal()">×</button>
+      <h2 id="modalTitle"></h2>
+      <div class="modal-meta" id="modalMeta"></div>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="loader"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let STATE = { courses: [], spareTeam: [], registrations: [] };
+let currentFilter = 'all';
+let activeCourseId = null;
+
+// ---------- Boot ----------
+function boot() {
+  google.script.run
+    .withSuccessHandler(data => { STATE = data; renderGrid(); })
+    .withFailureHandler(err => { showToast('โหลดข้อมูลไม่สำเร็จ: ' + err.message, true); })
+    .getInitialData();
+}
+
+function refresh(silent) {
+  google.script.run
+    .withSuccessHandler(list => {
+      STATE.registrations = list || [];
+      renderGrid();
+      if (activeCourseId) renderModalBody();
+    })
+    .withFailureHandler(err => { if (!silent) showToast('Refresh ผิดพลาด', true); })
+    .getRegistrations();
+}
+
+// ---------- Grid render ----------
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const courses = STATE.courses.filter(c => {
+    if (currentFilter === 'all') return true;
+    return (c.status || '').toLowerCase() === currentFilter;
+  });
+
+  if (courses.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1; padding:40px">
+        ยังไม่มีข้อมูลคอร์สในแท็บ "Course"<br>
+        <small>โปรดเปิด Apps Script และรันฟังก์ชัน <code>setupSheets()</code> เพื่อสร้างข้อมูลตัวอย่าง</small>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = courses.map(c => {
+    const reg = STATE.registrations.filter(r => r.course === c.name && r.date === c.date);
+    const registered = reg.slice(0, c.capacity).length;
+    const waitlist   = Math.max(0, reg.length - c.capacity);
+    const ratio = Math.min(registered / c.capacity, 1);
+    const dotColor = ratio >= 1 ? '#ff5e8a' : (ratio >= 0.8 ? '#ffb84d' : '#52c878');
+
+    return `
+      <div class="card" style="--accent:${c.color}">
+        <div class="card-head">
+          <span class="badge">${escapeHtml(c.status)}</span>
+          <span class="icon">${c.icon}</span>
+        </div>
+        <div class="card-body">
+          <h3>${escapeHtml(c.name)}</h3>
+          <p class="desc">${escapeHtml(c.desc || '')}</p>
+          <div class="date">📅 ${escapeHtml(c.date || 'TBD')}</div>
+        </div>
+        <div class="progress"><div class="progress-bar" style="width:${ratio*100}%"></div></div>
+        <div class="card-stats">
+          <div class="stat">
+            <div class="stat-label">
+              <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${dotColor};margin-right:4px;vertical-align:middle"></span>
+              Registered
+            </div>
+            <div class="stat-val">${registered}<span class="max">/${c.capacity}</span></div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Backfill</div>
+            <div class="stat-val">${waitlist}<span class="max"> คน</span></div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-ghost" onclick="openModal('${c.id}','view')">👥 ดูรายชื่อ</button>
+          <button class="btn btn-primary" onclick="openModal('${c.id}','register')">+ ลงทะเบียน</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ---------- Modal ----------
+function openModal(courseId) {
+  activeCourseId = courseId;
+  const c = STATE.courses.find(x => x.id === courseId);
+  if (!c) return;
+  const head = document.getElementById('modalHead');
+  head.style.background = `linear-gradient(135deg, ${c.color} 0%, ${c.color}dd 100%)`;
+  document.getElementById('modalTitle').textContent = `${c.icon}  ${c.name}`;
+  document.getElementById('modalMeta').textContent  = `📅 ${c.date}   ·   ${c.desc || ''}`;
+  document.getElementById('overlay').classList.add('show');
+  renderModalBody();
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('show');
+  activeCourseId = null;
+}
+
+function renderModalBody() {
+  const c = STATE.courses.find(x => x.id === activeCourseId);
+  if (!c) return;
+
+  const reg = STATE.registrations.filter(r => r.course === c.name && r.date === c.date);
+  const registered = reg.slice(0, c.capacity);
+  const waitlist   = reg.slice(c.capacity);
+  const isFull = registered.length >= c.capacity;
+
+  // Spare names already used on this date (anywhere)
+  const usedSpares = new Set(
+    STATE.registrations
+      .filter(r => r.date === c.date && r.spare)
+      .map(r => r.spare.toLowerCase())
+  );
+  const availableSpares = STATE.spareTeam.filter(s => !usedSpares.has(s.name.toLowerCase()));
+
+  // Unique sites for site dropdown helper
+  const sites = Array.from(new Set([
+    ...STATE.spareTeam.map(s => s.site).filter(Boolean),
+    ...STATE.registrations.map(r => r.site).filter(Boolean).map(s => s.replace(/\s*\[BACKFILL\]\s*/i,'')),
+  ])).sort();
+
+  const formHtml = `
+    <div class="modal-section">
+      <div class="section-title">📝 ${isFull ? 'ลงทะเบียน Backfill (รอที่ว่าง)' : 'ลงทะเบียนเข้าร่วม'}</div>
+      ${isFull
+        ? `<div class="alert alert-warn">⚠️ คลาสนี้เต็มแล้ว (${registered.length}/${c.capacity}) — การลงทะเบียนจะถูกเพิ่มในรายการ Backfill ลำดับที่ ${waitlist.length+1}</div>`
+        : `<div class="alert alert-info">💡 เหลือที่ว่าง ${c.capacity - registered.length} ที่นั่ง</div>`}
+
+      <div class="alert alert-warn" style="font-size:12.5px">
+        🔒 <strong>เงื่อนไข Spare Team:</strong> Spare แต่ละคนเลือกได้เพียง 1 คอร์สต่อวันเท่านั้น —
+        ${availableSpares.length === STATE.spareTeam.length
+          ? `ทุกคน (${availableSpares.length} คน) ยังว่างสำหรับวันที่นี้`
+          : `เหลือ Spare ที่ว่างสำหรับ ${escapeHtml(c.date)} อีก <strong>${availableSpares.length}/${STATE.spareTeam.length}</strong> คน`}
+      </div>
+
+      <div id="formError"></div>
+
+      <form onsubmit="submit(event)">
+        <div class="field full">
+          <label>ชื่อ-นามสกุล *</label>
+          <input type="text" name="name" required placeholder="เช่น สมชาย ใจดี">
+        </div>
+        <div class="field">
+          <label>Site *</label>
+          <input list="sitesList" name="site" required placeholder="พิมพ์หรือเลือก">
+          <datalist id="sitesList">
+            ${sites.map(s => `<option value="${escapeAttr(s)}">`).join('')}
+          </datalist>
+        </div>
+        <div class="field">
+          <label>Spare Name${availableSpares.length === 0 ? '' : ' *'}</label>
+          <select name="spare" ${availableSpares.length === 0 ? '' : 'required'}>
+            <option value="">— เลือก Spare —</option>
+            ${availableSpares.map(s => `<option value="${escapeAttr(s.name)}">${escapeHtml(s.name)}${s.site ? ' · '+escapeHtml(s.site) : ''}</option>`).join('')}
+          </select>
+          <div class="hint">${availableSpares.length === 0 ? 'ไม่มี Spare ว่างสำหรับวันนี้' : 'แสดงเฉพาะคนที่ยังไม่ถูกเลือกในวันที่ ' + escapeHtml(c.date)}</div>
+        </div>
+        <div class="field full">
+          <button type="submit" class="btn btn-full" id="submitBtn">
+            ${isFull ? '➕ เพิ่มชื่อใน Backfill' : '✓ ยืนยันการลงทะเบียน'}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-section">
+      <div class="section-title">✅ ผู้ลงทะเบียน <span class="count">${registered.length}/${c.capacity}</span></div>
+      ${registered.length === 0
+        ? `<div class="empty-state">ยังไม่มีผู้ลงทะเบียน — เป็นคนแรกได้เลย!</div>`
+        : `<div class="person-list">${registered.map((p,i) => personHtml(p,i+1,c.color,false)).join('')}</div>`}
+    </div>
+
+    <div class="modal-section">
+      <div class="section-title">⏳ Backfill (รายการสำรอง) <span class="count">${waitlist.length}</span></div>
+      ${waitlist.length === 0
+        ? `<div class="empty-state">ยังไม่มี Backfill ในขณะนี้</div>`
+        : `<div class="person-list">${waitlist.map((p,i) => personHtml(p,i+1,c.color,true)).join('')}</div>`}
+    </div>
+  `;
+
+  document.getElementById('modalBody').innerHTML = formHtml;
+}
+
+function personHtml(p, rank, accent, isWait) {
+  const initials = p.name.trim().split(/\s+/).map(x => x[0]).slice(0,2).join('').toUpperCase();
+  return `
+    <div class="person ${isWait ? 'waitlist' : ''}">
+      <div class="avatar" style="background:${accent}">${escapeHtml(initials)}</div>
+      <div class="info">
+        <div class="name">${escapeHtml(p.name)}</div>
+        <div class="meta">${escapeHtml(p.site || '-')}${p.spare ? ' · Spare: '+escapeHtml(p.spare) : ''}</div>
+      </div>
+      <span class="rank">#${rank}</span>
+      <button class="unreg" title="ยกเลิก" onclick="cancelReg(${p.rowIndex})">✕</button>
+    </div>`;
+}
+
+// ---------- Submit ----------
+function submit(e) {
+  e.preventDefault();
+  const c = STATE.courses.find(x => x.id === activeCourseId);
+  const form = e.target;
+  const btn = document.getElementById('submitBtn');
+  const errBox = document.getElementById('formError');
+  errBox.innerHTML = '';
+
+  const payload = {
+    name:   form.name.value.trim(),
+    site:   form.site.value.trim(),
+    course: c.name,
+    date:   c.date,
+    spare:  form.spare.value.trim(),
+  };
+
+  btn.disabled = true; btn.textContent = 'กำลังบันทึก...';
+
+  google.script.run
+    .withSuccessHandler(res => {
+      btn.disabled = false;
+      btn.textContent = '✓ ยืนยันการลงทะเบียน';
+      if (!res.ok) {
+        errBox.innerHTML = `<div class="alert alert-err">❌ ${escapeHtml(res.error)}</div>`;
+        return;
+      }
+      showToast(res.message);
+      STATE.registrations = res.registrations || [];
+      form.reset();
+      renderGrid();
+      renderModalBody();
+    })
+    .withFailureHandler(err => {
+      btn.disabled = false;
+      btn.textContent = '✓ ยืนยันการลงทะเบียน';
+      errBox.innerHTML = `<div class="alert alert-err">❌ ${escapeHtml(err.message)}</div>`;
+    })
+    .submitRegistration(payload);
+}
+
+function cancelReg(rowIndex) {
+  if (!confirm('ยืนยันการยกเลิกการลงทะเบียน?')) return;
+  google.script.run
+    .withSuccessHandler(res => {
+      if (!res.ok) { showToast(res.error, true); return; }
+      STATE.registrations = res.registrations || [];
+      showToast('✓ ยกเลิกการลงทะเบียนแล้ว');
+      renderGrid();
+      renderModalBody();
+    })
+    .withFailureHandler(err => showToast(err.message, true))
+    .unregister(rowIndex);
+}
+
+// ---------- Utils ----------
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('error', !!isError);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.onclick = () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    currentFilter = chip.dataset.filter;
+    renderGrid();
+  };
+});
+document.getElementById('overlay').onclick = (e) => { if (e.target.id === 'overlay') closeModal(); };
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+// Auto-refresh every 20s to pick up other people's submissions
+setInterval(() => refresh(true), 20000);
+
+boot();
+</script>
 </body>
 </html>
